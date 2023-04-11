@@ -14,8 +14,9 @@ require ('config.php');
     </head>
     <body>
         <h1>My Login Page</h1>
-        <p><a href="https://accounts.google.com/o/oauth2/v2/auth?scope=email&access_type=online&redirect_uri=<?=urlencode('http://localhost/oauth2.0/connect.php')?>&response_type=code&client_id=<?= GOOGLE_ID ?>">
+        <p><a href="https://accounts.google.com/o/oauth2/v2/auth?scope=email&access_type=online&redirect_uri=<?=urlencode('http://localhost/oauth2.0/connect.php')?>&response_type=code&client_id=<?= client_id ?>">
             Login with Google
         </a>
     </p>
 </html>
+<!-- Get token acess with code -->
