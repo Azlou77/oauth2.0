@@ -1,50 +1,49 @@
 <?php
 
+use GuzzleHttp\Client;
 // Enable loading of Composer dependencies
-require_once realpath(__DIR__ . '/vendor/autoload.php');
-require_once 'GraphHelper.php';
+require_once 'vendor/autoload.php';
+require_once 'GraphHelper.php'
 
-print('PHP Graph Tutorial'.PHP_EOL.PHP_EOL);
+
+/*
+    *PHP client currently doesn't have an authentication provider. 
+    *You will need to handle// getting an access token. The following 
+    *example demonstrates the client credential// OAuth flow and assumes 
+    *that an administrator has consented to the application
+*/
 
 // Load .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-$dotenv->required(['CLIENT_ID', 'TENANT_ID', 'GRAPH_USER_SCOPES']);
+$dotenv->required(['CLIENT_ID', 'GRAPH_USER_SCOPES', 'CLIENT_SECRET']);
 
 //Get env variables
-$clientId = $_ENV['CLIENT_ID'];
+$clientId = 
 $tenantId = $_ENV['TENANT_ID'];
 $scopes = $_ENV['GRAPH_USER_SCOPES'];
 
-//Add device code for an acess token
-$deviceCode = GraphHelper::getDeviceCode($clientId, $tenantId, $scopes);
-print('Please go to the following URL and enter the code: '.$deviceCode->verification_uri.PHP_EOL);
-print('Code: '.$deviceCode->user_code.PHP_EOL);
+//Instanciation of new Azure AD client with GuzzleHttp Client
+$guzzle = new \GuzzleHttp\Client();
+$url = 'https://login.microsoftonline.com/'. $tenantId . '/oauth2/token?api-version=1.0';
+$token = json_decode($guzzle->post($url, [
+    'form_params'=> [
+        'client_id'=> $_ENV['CLIENT_ID'],
+        'client_secret'=> $_ENV['CLIENT_SECRET'],
+        'resource'=> 'https://graph.microsoft.com/',
+        'grant_type'=> 'client_credentials',
+    ],
+])->getBody()->getContents());
+$accessToken = $token->access_token;
 
-//Get acess token
-$accessToken = GraphHelper::getAccessToken($clientId, $tenantId, $deviceCode->device_code, $scopes);
-print('Access token: '.$accessToken.PHP_EOL);
+// Create a new Graph client.$graph = newGraph();
+$graph->setAccessToken($accessToken);
 
-//Check if token is valid
-if (GraphHelper::isTokenValid($accessToken)) {
-    print('Token is valid'.PHP_EOL);
-} else {
-    print('Token is not valid'.PHP_EOL);
-}
+// Make a call to /me Graph resource.$user = $graph->createRequest("GET", "/me")
+$user = $graph->createRequest("GET", "/me")
+              ->setReturnType(Model\User::class)
+              ->execute();
 
-//Display messages inbox
-$messages = GraphHelper::getMessages($accessToken);
-print('Messages:'.PHP_EOL);
-foreach ($messages as $message) {
-    print('Subject: '.$message->subject.PHP_EOL);
-    print('From: '.$message->from->emailAddress->address.PHP_EOL);
-    print('Body: '.$message->bodyPreview.PHP_EOL);
-    print('Received: '.$message->receivedDateTime.PHP_EOL);
-    print('Is read: '.$message->isRead.PHP_EOL);
-    print('Has attachments: '.$message->hasAttachments.PHP_EOL);
-    print('Web link: '.$message->webLink.PHP_EOL);
-    print(''.PHP_EOL);
-}
 
 
 
