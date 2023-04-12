@@ -36,9 +36,13 @@ $scopes = ['https://graph.microsoft.com/.default'];
 //Instanciation of new authentication provide
 $authProvider = new PhpLeagueAuthenticationProvider($tokenRequestContext, $scopes);
 
-//Initialize Guuzzle http client
+//Initialize Guzzle http client
 $guzzleConfig = [
-    // your custom config
+    'base_uri' => 'https://graph.microsoft.com/beta',
+    'headers' => [
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+    ],
 ];
 $httpClient = GraphClientFactory::createWithConfig($guzzleConfig);
 
