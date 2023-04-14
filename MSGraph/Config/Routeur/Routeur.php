@@ -1,7 +1,7 @@
 <?php
 
 namespace Config\Routeur;
-use App\Controller\AuthController;
+use MSGraph\Controller\AuthController;
 
 class Routeur{
     public function Router(){   
