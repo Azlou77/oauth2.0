@@ -1,5 +1,5 @@
 <?php
-namespace MSGraph\Controllers\Auth;
+namespace App\Controllers\Auth;
 //Class to get env variables
 class GetEnv extends LoadEnv
 {

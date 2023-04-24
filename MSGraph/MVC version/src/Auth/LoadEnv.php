@@ -1,5 +1,5 @@
 <?php
-namespace MSGraph\Controllers\Auth;
+namespace App\Controllers\Auth;
 /*
   *Class parent to instance child class and
   *to load env variables
