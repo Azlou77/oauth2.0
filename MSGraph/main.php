@@ -12,11 +12,9 @@ print('PHP Graph Tutorial'.PHP_EOL.PHP_EOL);
 // Load .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-$dotenv->required(['CLIENT_ID', 'TENANT_ID', 'GRAPH_USER_SCOPES']);
+$dotenv->required(['CLIENT_ID', 'CLIENT_SECRET', 'TENANT_ID']);
 
 initializeGraph();
-
-greetUser();
 
 $choice = -1;
 
@@ -24,9 +22,8 @@ while ($choice != 0) {
     echo('Please choose one of the following options:'.PHP_EOL);
     echo('0. Exit'.PHP_EOL);
     echo('1. Display access token'.PHP_EOL);
-    echo('2. List my inbox'.PHP_EOL);
-    echo('3. Send mail'.PHP_EOL);
-    echo('4. Make a Graph call'.PHP_EOL);
+    echo('2. List users (requires app-only)'.PHP_EOL);
+    echo('3. List inbox'.PHP_EOL);
 
     $choice = (int)readline('');
 
@@ -35,13 +32,10 @@ while ($choice != 0) {
             displayAccessToken();
             break;
         case 2:
-            listInbox();
+            listUsers();
             break;
         case 3:
-            sendMail();
-            break;
-        case 4:
-            makeGraphCall();
+            listInbox();
             break;
         case 0:
         default:
@@ -52,41 +46,41 @@ while ($choice != 0) {
 
 // <InitializeGraphSnippet>
 function initializeGraph(): void {
-    GraphHelper::initializeGraphForUserAuth();
+    GraphHelper::initializeGraphForAppOnlyAuth();
 }
 // </InitializeGraphSnippet>
-
-// <GreetUserSnippet>
-function greetUser(): void {
-    try {
-        $user = GraphHelper::getUser();
-        print('Hello, '.$user->getDisplayName().'!'.PHP_EOL);
-
-        // For Work/school accounts, email is in Mail property
-        // Personal accounts, email is in UserPrincipalName
-        $email = $user->getMail();
-        if (empty($email)) {
-            $email = $user->getUserPrincipalName();
-        }
-        print('Email: '.$email.PHP_EOL.PHP_EOL);
-    } catch (Exception $e) {
-        print('Error getting user: '.$e->getMessage().PHP_EOL.PHP_EOL);
-    }
-}
-// </GreetUserSnippet>
 
 // <DisplayAccessTokenSnippet>
 function displayAccessToken(): void {
     try {
-        $token = GraphHelper::getUserToken();
-        print('User token: '.$token.PHP_EOL.PHP_EOL);
+        $token = GraphHelper::getAppOnlyToken();
+        print('App-only token: '.$token.PHP_EOL.PHP_EOL);
     } catch (Exception $e) {
         print('Error getting access token: '.$e->getMessage().PHP_EOL.PHP_EOL);
     }
 }
 // </DisplayAccessTokenSnippet>
 
-// <ListInboxSnippet>
+// <ListUsersSnippet>
+function listUsers(): void {
+    try {
+        $users = GraphHelper::getUsers();
+
+        // Output each user's details
+        foreach ($users->getPage() as $user) {
+            print('User: '.$user->getDisplayName().PHP_EOL);
+            print('  ID: '.$user->getId().PHP_EOL);
+            $email = $user->getMail();
+            $email = isset($email) ? $email : 'NO EMAIL';
+            print('  Email: '.$email.PHP_EOL);
+        }
+
+        $moreAvailable = $users->isEnd() ? 'False' : 'True';
+        print(PHP_EOL.'More users available? '.$moreAvailable.PHP_EOL.PHP_EOL);
+    } catch (Exception $e) {
+        print(PHP_EOL.'Error getting users: '.$e->getMessage().PHP_EOL.PHP_EOL);
+    }
+}
 function listInbox(): void {
     try {
         $messages = GraphHelper::getInbox();
@@ -106,44 +100,7 @@ function listInbox(): void {
         print('Error getting user\'s inbox: '.$e->getMessage().PHP_EOL.PHP_EOL);
     }
 }
-// </ListInboxSnippet>
-
-// <SendMailSnippet>
-function sendMail(): void {
-    try {
-        // Send mail to the signed-in user
-        // Get the user for their email address
-        $user = GraphHelper::getUser();
-
-        // For Work/school accounts, email is in Mail property
-        // Personal accounts, email is in UserPrincipalName
-        $email = $user->getMail();
-        if (empty($email)) {
-            $email = $user->getUserPrincipalName();
-        }
-
-        GraphHelper::sendMail('Testing Microsoft Graph', 'Hello world!', $email);
-
-        print(PHP_EOL.'Mail sent.'.PHP_EOL.PHP_EOL);
-    } catch (Exception $e) {
-        print('Error sending mail: '.$e->getMessage().PHP_EOL.PHP_EOL);
-    }
-}
-// </SendMailSnippet>
+// </ListUsersSnippet>
 
 // <MakeGraphCallSnippet>
-function makeGraphCall(): void {
-    try {
-        GraphHelper::makeGraphCall();
-    } catch (Exception $e) {
-        print(PHP_EOL.'Error making Graph call'.PHP_EOL.PHP_EOL);
-    }
-}
-// </MakeGraphCallSnippet>
-
-// Create a login page with a link to oauth
-function loginPage(): void {
-    $loginUrl = GraphHelper::getLoginUrl();
-    print('Please visit: '.$loginUrl.' to sign in and grant permission to this app.'.PHP_EOL);
-}
 ?>
