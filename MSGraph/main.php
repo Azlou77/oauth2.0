@@ -12,43 +12,78 @@ $dotenv->required(['CLIENT_ID', 'TENANT_ID', 'GRAPH_USER_SCOPES']);
 
 // Initialisze MS-Graph client authentification
 GraphHelper::initializeGraphForAppOnlyAuth();
-
 $graph = new Graph();
-// Get token code
+
+//Get the access token from MSGraph class
 $token = GraphHelper::getAppOnlyToken();
-// Set token code
+      
+//Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-// Only request specific properties
-$select = '$select=from,isRead,receivedDateTime,subject';
-// Sort by received time, newest first
-$orderBy = '$orderBy=receivedDateTime DESC';
+//Set the users who participate to the event
+$attendees = [];
+array_push($attendees, [
+        
+    //Description user data
+        'emailAddress' => [
+        'address' => 'hyro.tsitana-iloharaoke@network-systems.fr',
+        'name' => 'Hyro'
+        ],
+        
+    //Precise if the users presence must come or not 
+        'type' => 'required'
+        ]);
 
-$ptr = $graph->createCollectionRequest('GET', '/users/9b3008f7-d1f4-4f8b-8a1a-163473441064/mailFolders/inbox/messages?'.$select.'&'.$orderBy)
-                ->setReturnType(Model\Message::class)
-                ->setPageSize(25);
-$msgs = $ptr->getPage();
+    //Set the event data
+    $newEvent = [
+      'subject' => 'Test jeudi 13 avril 2022',
+      'attendees' => $attendees,
+     
+    //Set the start and end date of the event
+    'start' => [
+      'dateTime' => '2023-06-12T22:00:00',
+      'timeZone' => 'Pacific Standard Time'
+    ],
+    'end' => [
+      'dateTime' => '2023-06-12T23:10:00',
+      'timeZone' => 'Pacific Standard Time'
+    ],
+
+    //Set the goal of the event
+    'body' => [
+      "contentType" => "HTML",
+      "content" => "Chat about new hire"
+    ]
+  ];
+
+  //Get the events
+  //Path where the requests will be sent
+    $events = $graph->createRequest('GET', '/users/{user-id}/calendar/events')
+    ->setReturnType(Model\Event::class)
+    ->execute();
+    echo "List all events";
+
+
+ 
+
 
 ?>
 
 <html>
-    <!-- Display inbox messages -->
-    <h1>My inbox</h1>
-    <table class="table">
-        <thead>
+    <!--Showing Calendar Events  -->
+    <h1>My Events </h1>
+    <table>
+        <tr>
+            <th>Subject</th>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+        <?php foreach ($events as $event) : ?>
             <tr>
-                <th scope="col">From</th>
-                <th scope="col">Subject</th>
-                <th scope="col">Received</th>
+                <td><?php echo $event->getSubject(); ?></td>
+                <td><?php echo $event->getStart()->getDateTime(); ?></td>
+                <td><?php echo $event->getEnd()->getDateTime(); ?></td>
             </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($msgs as $msg): ?>
-                <tr>
-                    <td><?php echo $msg->getFrom()->getEmailAddress()->getName(); ?></td>
-                    <td><?php echo $msg->getSubject(); ?></td>
-                    <td><?php echo $msg->getReceivedDateTime()->format('Y-m-d H:i:s'); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
+        <?php endforeach; ?>
+   
 </html>
