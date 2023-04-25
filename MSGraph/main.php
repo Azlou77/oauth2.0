@@ -20,6 +20,8 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
+
+$data = [
 //Set the users who participate to the event
 $attendees = [];
 array_push($attendees, [
@@ -36,7 +38,7 @@ array_push($attendees, [
 
     //Set the event data
     $newEvent = [
-      'subject' => 'Test jeudi 13 avril 2022',
+      'subject' => 'Test mardi 25 avril 2022',
       'attendees' => $attendees,
      
     //Set the start and end date of the event
@@ -54,36 +56,21 @@ array_push($attendees, [
       "contentType" => "HTML",
       "content" => "Chat about new hire"
     ]
-  ];
+    ];
+    ];
+
+
 
   //Get the events
   //Path where the requests will be sent
-    $events = $graph->createRequest('GET', '/users/{user-id}/calendar/events')
-    ->setReturnType(Model\Event::class)
-    ->execute();
-    echo "List all events";
+    $events = $graph->createRequest('POST', '/')
+                    ->attachBody($newEvent)                
+                    ->setReturnType(Model\Event::class)
+                    ->execute();
+    
 
 
  
 
 
 ?>
-
-<html>
-    <!--Showing Calendar Events  -->
-    <h1>My Events </h1>
-    <table>
-        <tr>
-            <th>Subject</th>
-            <th>Start</th>
-            <th>End</th>
-        </tr>
-        <?php foreach ($events as $event) : ?>
-            <tr>
-                <td><?php echo $event->getSubject(); ?></td>
-                <td><?php echo $event->getStart()->getDateTime(); ?></td>
-                <td><?php echo $event->getEnd()->getDateTime(); ?></td>
-            </tr>
-        <?php endforeach; ?>
-   
-</html>
