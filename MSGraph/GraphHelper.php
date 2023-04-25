@@ -92,7 +92,7 @@ class GraphHelper {
         // Sort by received time, newest first
         $orderBy = '$orderBy=receivedDateTime DESC';
 
-        $requestUrl = '/users/{users-id}/mailFolders/inbox/messages?'.$select.'&'.$orderBy;
+        $requestUrl = '/users/9b3008f7-d1f4-4f8b-8a1a-163473441064/mailFolders/inbox/messages?'.$select.'&'.$orderBy;
         return GraphHelper::$appClient->createCollectionRequest('GET', $requestUrl)
                                        ->setReturnType(Model\Message::class)
                                        ->setPageSize(25);
