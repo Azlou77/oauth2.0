@@ -20,57 +20,28 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-
-$data = [
-//Set the users who participate to the event
-$attendees = [];
-array_push($attendees, [
-        
-    //Description user data
-        'emailAddress' => [
-        'address' => 'hyro.tsitana-iloharaoke@network-systems.fr',
-        'name' => 'Hyro'
-        ],
-        
-    //Precise if the users presence must come or not 
-        'type' => 'required'
-        ]);
-
-    //Set the event data
-    $newEvent = [
-      'subject' => 'Test mardi 25 avril 2022',
-      'attendees' => $attendees,
-     
-    //Set the start and end date of the event
+//Create a new event
+$newEvent = [
+    'subject' => $_POST['subject'],
+    'body' => [
+        'contentType' => 'HTML',
+        'content' => $_POST['body']
+    ],
     'start' => [
-      'dateTime' => '2023-06-12T22:00:00',
-      'timeZone' => 'Pacific Standard Time'
+        'dateTime' => $_POST['start'],
+        'timeZone' => 'Pacific Standard Time'
     ],
     'end' => [
-      'dateTime' => '2023-06-12T23:10:00',
-      'timeZone' => 'Pacific Standard Time'
+        'dateTime' => $_POST['end'],
+        'timeZone' => 'Pacific Standard Time'
     ],
+];
+// Request with users
+$response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/events')
+    ->attachBody($newEvent)
+    ->setReturnType(Model\Event::class)
+    ->execute();
 
-    //Set the goal of the event
-    'body' => [
-      "contentType" => "HTML",
-      "content" => "Chat about new hire"
-    ]
-    ];
-    ];
-
-
-
-  //Get the events
-  //Path where the requests will be sent
-    $events = $graph->createRequest('POST', '/')
-                    ->attachBody($newEvent)                
-                    ->setReturnType(Model\Event::class)
-                    ->execute();
-    
-
-
- 
 
 
 ?>
