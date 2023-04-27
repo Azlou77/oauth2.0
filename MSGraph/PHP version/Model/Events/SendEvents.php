@@ -2,13 +2,18 @@
 // define variables and set to empty values
 $newEvent =
 [
+    // Set empty subject
     'subject' => '',
+    // Set empty subject
     'reminderMinutesBeforeStart' => '',
+    // Set empty reminder
     'isReminderOn' => true,
+    // Set empty body
     'body' => [
         'contentType' => 'HTML',
         'content' => ''
     ],
+    // Set empty start and end time
     'start' => [
         'dateTime' => '',
         'timeZone' => 'Pacific Standard Time'
@@ -16,6 +21,14 @@ $newEvent =
     'end' => [
         'dateTime' => '',
         'timeZone' => 'Pacific Standard Time'
+    ],
+    // Set empty attendees
+    'attendees' => [
+        'emailAddress' => [
+            'address' => '',
+            'name' => ''
+        ],
+        'type' => 'required'
     ],
 ];
 
@@ -39,6 +52,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     'end' => [
         'dateTime' => $_POST['end'],
         'timeZone' => 'Pacific Standard Time'
+    ],
+    // Set attendees
+    'attendees' => [
+        'emailAddress' => [
+            'address' => $_POST['address'],
+            'name' => $_POST['name']
+        ],
+        'type' => 'required'
     ],
   ];
 
