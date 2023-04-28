@@ -1,7 +1,73 @@
+<!-- Create form to send events -->
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    </head>
+    <body>
+       <h1>Send events</h1>
+
+       <!-- Form post -->
+        <form  method="POST" action="">
+
+            <!-- Field texte subject -->
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject">
+            </div>
+
+            <!-- Field select reminder -->
+            <div class="form-group">
+                <label for="reminder">Reminder</label>
+                    <select class="form-control" id="reminderMinutesBeforeStart" name="reminderMinutesBeforeStart">
+                        <!-- Field options -->
+                        <option value="0">No reminder</option>
+                        <option value="15">15 minutes</option>
+                        <option value="30">30 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="120">2 hours</option>
+                        <option value="1440">1 day</option>
+                        <option value="2880">2 days</option>
+                        <option value="4320">3 days</option>
+                        <option value="10080">1 week</option>
+                    </select>
+            </div>
+
+            <!-- Field text body-->
+            <div class="form-group">
+                <label for="body">Body</label>
+                <input type="text" class="form-control" id="body" name="body" placeholder="Body">
+            </div>
+
+            <!-- Field date -->
+            <div class="form-group">
+                <label for="start">Start</label>
+                <input type="date" class="form-control" id="start" name="start" placeholder="Start">
+            </div>
+            <div class="form-group">
+                <label for="end">End</label>
+                <input type="date" class="form-control" id="end" name="end" placeholder="End">
+            </div>
+
+            <!-- Field to set attendees -->
+            <div class="form-group">
+                <label for="attendees">Attendees</label>
+                <input type="text" class="form-control" id="attendees" name="attendees"  placeholder="Attendees">
+            </div>
+            
+
+            <!-- Button submit -->
+            <button type="submit" name="submit" value="Valider" class="btn btn-primary">Submit</button>
+        </form>
+    </body>
+</html>
+
 <?php
+// Use dependencies commposer
 require_once 'vendor/autoload.php';
 require_once 'GraphHelper.php';
 
+// Use features MSGraph
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 
@@ -11,39 +77,87 @@ $dotenv->load();
 $dotenv->required(['CLIENT_ID', 'TENANT_ID', 'GRAPH_USER_SCOPES']);
 
 // Initialisze MS-Graph client authentification
-GraphHelper::initializeGraphForUserAuth();
+GraphHelper::initializeGraphForAppOnlyAuth();
+$graph = new Graph();
 
-// Get user data
-$user = GraphHelper::getUser();
+//Get the access token from MSGraph class
+$token = GraphHelper::getAppOnlyToken();
+    
+//Set the access token to the GraphHelper class
+$graph->setAccessToken($token);
 
-//Instanciation new MS Graph
-$messages = GraphHelper::getInbox();
+// define variables and set to empty values
+// Set attendees
+$attendees = [];
+array_push($attendees, [
+        'emailAddress' => [
+        'address' => '',
+        'name' => ''
+        ],
+        'type' => 'required'
+        ]);
+$newEvent =
+[
+    'subject' => '',
+    'attendees' => $attendees,
+    'reminderMinutesBeforeStart' => '',
+    'isReminderOn' => true,
+    'body' => [
+        'contentType' => 'HTML',
+        'content' => ''
+    ],
+    'start' => [
+        'dateTime' => '',
+        'timeZone' => 'Pacific Standard Time'
+    ],
+    'end' => [
+        'dateTime' => '',
+        'timeZone' => 'Pacific Standard Time'
+    ],
+ 
+];
+// Check if the form if the method is POST
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Set attendees
+$attendees = [];
+array_push($attendees, [
+        'emailAddress' => [
+        'address' => $_POST['attendees'],
+        'name' => ''
+        ],
+        'type' => 'required'
+        ]);
 
+  $newEvent = [
+    'subject' => $_POST['subject'],
+    'attendees' => $attendees,
+    // Set reminder
+    'reminderMinutesBeforeStart' => $_POST['reminderMinutesBeforeStart'],
+    'isReminderOn' => true,
+    
+    'body' => [
+        'contentType' => 'HTML',
+        'content' => $_POST['body']
+    ],
+    // Set start and end time
+    'start' => [
+        'dateTime' => $_POST['start'],
+        'timeZone' => 'Pacific Standard Time'
+    ],
+    'end' => [
+        'dateTime' => $_POST['end'],
+        'timeZone' => 'Pacific Standard Time'
+    ],
+     
+
+];
+
+// Request with users
+$response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/events')
+    ->attachBody($newEvent)
+    ->setReturnType(Model\Event::class)
+    ->execute();
+}
 ?>
-<!-- Display inbox messages user -->
-<html>
-  <head>
-    <title>MS Graph API</title>
-  </head>
-  <body>
-    <h2>Mail inbox</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>From</th>
-          <th>Subject</th>
-          <th>Received</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($messages->getPage() as $message): ?>
-          <tr>
-            <td><?php echo $message->getFrom()->getEmailAddress()->getName(); ?></td>
-            <td><?php echo $message->getSubject(); ?></td>
-            <td><?php echo $message->getReceivedDateTime()->format('m/d/Y g:i A'); ?></td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
-  </body>
-</html>
+
 
