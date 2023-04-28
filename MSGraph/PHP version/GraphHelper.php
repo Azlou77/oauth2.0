@@ -65,5 +65,6 @@ class GraphHelper {
             throw new Exception('Token endpoint returned '.$error, 100);
         }
     }
+
 }
 ?>

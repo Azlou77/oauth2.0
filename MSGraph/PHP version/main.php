@@ -1,6 +1,12 @@
-<?php include 'header.php'; ?>
-<h1>Send events</h1>
-       
+<!-- Create form to send events -->
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    </head>
+    <body>
+       <h1>Send events</h1>
+
        <!-- Form post -->
         <form  method="POST" action="">
 
@@ -43,13 +49,12 @@
                 <input type="date" class="form-control" id="end" name="end" placeholder="End">
             </div>
 
-             <!--Field email and name -->
-             <div class="form-group">
+            <!-- Field to set attendees -->
+            <div class="form-group">
                 <label for="attendees">Attendees</label>
-                <input type="text" class="form-control" name="name" value="Hyro TSITANA ILOHARAOKE" placeholder="name">
-                <input type="email" class="form-control" name="address" value="hyro.tsitana-iloharaoke@network-systems.fr" placeholder="email">
-                <small  class="form-text text-muted">Enter the email of the attendees separated by a comma.</small>
+                <input type="text" class="form-control" id="attendees" name="attendees"  placeholder="Attendees">
             </div>
+            
 
             <!-- Button submit -->
             <button type="submit" name="submit" value="Valider" class="btn btn-primary">Submit</button>
@@ -81,11 +86,20 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-
 // define variables and set to empty values
+// Set attendees
+$attendees = [];
+array_push($attendees, [
+        'emailAddress' => [
+        'address' => '',
+        'name' => ''
+        ],
+        'type' => 'required'
+        ]);
 $newEvent =
 [
     'subject' => '',
+    'attendees' => $attendees,
     'reminderMinutesBeforeStart' => '',
     'isReminderOn' => true,
     'body' => [
@@ -100,19 +114,23 @@ $newEvent =
         'dateTime' => '',
         'timeZone' => 'Pacific Standard Time'
     ],
-     // Set empty attendees
-     'attendees' => [
-        'emailAddress' => [
-            'address' => '',
-            'name' => '',
-        ],
-        'type' => 'required'
-    ],
+ 
 ];
 // Check if the form if the method is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Set attendees
+$attendees = [];
+array_push($attendees, [
+        'emailAddress' => [
+        'address' => $_POST['attendees'],
+        'name' => ''
+        ],
+        'type' => 'required'
+        ]);
+
   $newEvent = [
     'subject' => $_POST['subject'],
+    'attendees' => $attendees,
     // Set reminder
     'reminderMinutesBeforeStart' => $_POST['reminderMinutesBeforeStart'],
     'isReminderOn' => true,
@@ -130,14 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'dateTime' => $_POST['end'],
         'timeZone' => 'Pacific Standard Time'
     ],
-     // Set attendees
-        'attendees' => [
-            'emailAddress' => [
-                'address' => $_POST['emailAddress']['address'],
-                'name' => $_POST['emailAddress']['name'],
-            ],
-            'type' => 'required'
-        ],
+     
 
 ];
 
@@ -150,11 +161,3 @@ $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.f
 ?>
 
 
-
-
-
-
-
- 
-
- 
