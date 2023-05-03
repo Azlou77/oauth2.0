@@ -5,10 +5,10 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     </head>
     <body>
-       <h1>Send events</h1>
+       <h1>Send mail</h1>
 
        <!-- Form post -->
-        <form  method="POST" action="">
+        <form  method="POST" action="" enctype="multipart/form-data">
 
             <!-- Field texte subject -->
             <div class="form-group">
@@ -16,22 +16,7 @@
                 <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject">
             </div>
 
-            <!-- Field select reminder -->
-            <div class="form-group">
-                <label for="reminder">Reminder</label>
-                    <select class="form-control" id="reminderMinutesBeforeStart" name="reminderMinutesBeforeStart">
-                        <!-- Field options -->
-                        <option value="0">No reminder</option>
-                        <option value="15">15 minutes</option>
-                        <option value="30">30 minutes</option>
-                        <option value="60">1 hour</option>
-                        <option value="120">2 hours</option>
-                        <option value="1440">1 day</option>
-                        <option value="2880">2 days</option>
-                        <option value="4320">3 days</option>
-                        <option value="10080">1 week</option>
-                    </select>
-            </div>
+          
 
             <!-- Field text body-->
             <div class="form-group">
@@ -39,21 +24,19 @@
                 <input type="text" class="form-control" id="body" name="body" placeholder="Body">
             </div>
 
-            <!-- Field date -->
-            <div class="form-group">
-                <label for="start">Start</label>
-                <input type="date" class="form-control" id="start" name="start" placeholder="Start">
-            </div>
-            <div class="form-group">
-                <label for="end">End</label>
-                <input type="date" class="form-control" id="end" name="end" placeholder="End">
+              <!-- Field to set recipient -->
+              <div class="form-group">
+                <label for="email">Recipient</label>
+                <input type="email" class="form-control" name="toRecipients" placeholder="Recipient">
             </div>
 
-            <!-- Field to set attendees -->
+            <!-- Field to set attachment -->
             <div class="form-group">
-                <label for="attendees">Attendees</label>
-                <input type="text" class="form-control" id="attendees" name="attendees"  placeholder="Attendees">
-            </div>
+                <label for="attachments">Attachment</label>
+                <input type="file" class="form-control-file" id="attachments" name="attachments">
+
+           
+   
             
 
             <!-- Button submit -->
@@ -86,78 +69,138 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-// define variables and set to empty values
-// Set attendees
-$attendees = [];
-array_push($attendees, [
+/* Define variables and set to empty values
+   Request to send mail */
+
+// Set recipients in array
+$toRecipients = [];
+array_push($toRecipients,
+    [
         'emailAddress' => [
-        'address' => '',
-        'name' => ''
+            'address' => '',
         ],
-        'type' => 'required'
-        ]);
-$newEvent =
-[
-    'subject' => '',
-    'attendees' => $attendees,
-    'reminderMinutesBeforeStart' => '',
-    'isReminderOn' => true,
-    'body' => [
-        'contentType' => 'HTML',
-        'content' => ''
+    ]
+);
+// Create new mail
+$newMail = [
+    'message' => [
+
+        // Set subject
+        'subject' => '',
+
+        // Set recipients
+        'toRecipients' => $toRecipients,
+
+        // Set body
+        'body' => [
+            'contentType' => 'Text',
+            'content' => '',
+        ],
+        // Set attachments files
+        'attachments' => [
+            [
+                '@odata.type' => '#microsoft.graph.fileAttachment',
+                'name' => '',
+                'contentBytes' => '',
+               
+            ],
+        ],
     ],
-    'start' => [
-        'dateTime' => '',
-        'timeZone' => 'Pacific Standard Time'
-    ],
-    'end' => [
-        'dateTime' => '',
-        'timeZone' => 'Pacific Standard Time'
-    ],
- 
+
 ];
+
+
+/* Get post variables 
+   Request to send mail */
+
 // Check if the form if the method is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-// Set attendees
-$attendees = [];
-array_push($attendees, [
+
+/* Create new mail
+   Get post recipients in array */
+
+$toRecipients = [];
+array_push($toRecipients,
+    [
         'emailAddress' => [
-        'address' => $_POST['attendees'],
-        'name' => ''
+            'address' => $_POST['toRecipients'],
         ],
-        'type' => 'required'
-        ]);
+    ]
+);
 
-  $newEvent = [
-    'subject' => $_POST['subject'],
-    'attendees' => $attendees,
-    // Set reminder
-    'reminderMinutesBeforeStart' => $_POST['reminderMinutesBeforeStart'],
-    'isReminderOn' => true,
-    
-    'body' => [
-        'contentType' => 'HTML',
-        'content' => $_POST['body']
-    ],
-    // Set start and end time
-    'start' => [
-        'dateTime' => $_POST['start'],
-        'timeZone' => 'Pacific Standard Time'
-    ],
-    'end' => [
-        'dateTime' => $_POST['end'],
-        'timeZone' => 'Pacific Standard Time'
-    ],
-     
+// Verifications files
+if   (!empty($_FILES['attachments']['name']))
+{
 
-];
+//Define files's location to be uploaded
+$target_dir = "C:/Users/user1/AppData/Roaming/Microsoft/Templates";
 
-// Request with users
-$response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/events')
-    ->attachBody($newEvent)
-    ->setReturnType(Model\Event::class)
+//Define files's format
+$target_file = $target_dir . basename($_FILES["attachments"]["name"]);
+$uploadOk = 1;
+$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+// Check if file already exists
+if (file_exists($target_file)) {
+    echo "Sorry, file already exists.";
+    $uploadOk = 0;
+  }
+
+// Check file size
+if ($_FILES["attachments"]["size"] > 500000) {
+    echo "Sorry, your file is too large.";
+    $uploadOk = 0;
+  } 
+
+// Allow certain file formats
+if($imageFileType != "oft") {
+    echo "Sorry, only oft models outlook files are allowed.";
+    $uploadOk = 0;
+  }
+
+//  Helps to debug
+echo 'Voici quelques informations de débogage :';
+print_r($_FILES); 
+
+echo '</pre>';
+}
+
+$newMail = [
+    'message' => [
+
+        // Get post subject
+        'subject' => $_POST['subject'],
+
+        // Get post recipients
+        'toRecipients' => $toRecipients,
+
+        // Get post body
+        'body' => [
+            'contentType' => 'Text',
+            'content' => $_POST['body'],
+        ],  
+        // Get post attachments files
+        'attachments' => [
+            [
+                '@odata.type' => '#microsoft.graph.fileAttachment',
+                'name' => $_FILES['attachments'] ['name'],
+               
+                // Encode file in base64
+                'contentBytes' => base64_encode($_FILES['attachments'] ['tmp_name']),
+
+            ],
+
+        ],
+    ],
+
+]; 
+
+// Send mail
+$response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/sendMail')
+    ->attachBody($newMail)
     ->execute();
 }
+
 ?>
 
 

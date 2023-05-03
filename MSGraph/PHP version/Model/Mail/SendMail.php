@@ -1,26 +1,71 @@
 <?php
-//Request to send mail
+/* Define variables and set to empty values
+   Request to send mail */
+
+// Set recipients in array
+$toRecipients = [];
+array_push($toRecipients,
+    [
+        'emailAddress' => [
+            'address' => '',
+        ],
+    ]
+);
+// Create new mail
 $newMail = [
     'message' => [
-        'subject' => 'Meet for lunch?',
+
+        // Set subject
+        'subject' => '',
+
+        // Set body
         'body' => [
             'contentType' => 'Text',
-            'content' => 'The new cafeteria is open.'
+            'content' => '',
         ],
-        'toRecipients' => [
-            [
-                'emailAddress' => [
-                    'address' => '',
-                ],
-            ],
-        ],
+        // Set recipients
+        'toRecipients' => $toRecipients,
     ],
-    'saveToSentItems' => 'true',
+    // 
 ];
 
+/* Get post variables 
+   Request to send mail */
+
+// Check if the form if the method is POST
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+/* Create new mail
+   Get post recipients in array */
+
+$toRecipients = [];
+array_push($toRecipients,
+    [
+        'emailAddress' => [
+            'address' => $_POST['toRecipients'],
+        ],
+    ]
+);
+$newMail = [
+    'message' => [
+
+        // Get post subject
+        'subject' => $_POST['subject'],
+
+        // Get post recipients
+        'toRecipients' => $toRecipients,
+
+        // Get post body
+        'body' => [
+            'contentType' => 'Text',
+            'content' => $_POST['body'],
+        ],  
+    ],
+]; 
+
 // Send mail
-$response = $graph->createRequest("POST", "/me/sendMail")
+$response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/sendMail')
     ->attachBody($newMail)
-    ->setReturnType(Model\User::class)
     ->execute();
-    
+}
+?>
