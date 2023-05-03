@@ -35,13 +35,15 @@
                 <label for="attachments">Attachment</label>
                 <input type="file" class="form-control-file" id="attachments" name="attachments">
 
+           
    
+            
+
             <!-- Button submit -->
             <button type="submit" name="submit" value="Valider" class="btn btn-primary">Submit</button>
         </form>
     </body>
 </html>
-
 
 <?php
 // Use dependencies commposer
@@ -63,27 +65,22 @@ $graph = new Graph();
 
 //Get the access token from MSGraph class
 $token = GraphHelper::getAppOnlyToken();
-
+    
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
 /* Define variables and set to empty values
-Request to send mail */
+   Request to send mail */
 
 // Set recipients in array
 $toRecipients = [];
 array_push($toRecipients,
-[
-    'emailAddress' => [
-        'address' => '',
-    ],
-  ]
+    [
+        'emailAddress' => [
+            'address' => '',
+        ],
+    ]
 );
-
-// File which contains all verifications
-include 'View/include/upload.php';
-
-
 // Create new mail
 $newMail = [
     'message' => [
@@ -91,15 +88,25 @@ $newMail = [
         // Set subject
         'subject' => '',
 
+        // Set recipients
+        'toRecipients' => $toRecipients,
+
         // Set body
         'body' => [
             'contentType' => 'Text',
             'content' => '',
         ],
-        // Set recipients
-        'toRecipients' => $toRecipients,
+        // Set attachments files
+        'attachments' => [
+            [
+                '@odata.type' => '#microsoft.graph.fileAttachment',
+                'name' => '',
+                'contentBytes' => '',
+               
+            ],
+        ],
     ],
-    // 
+
 ];
 
 
@@ -120,6 +127,44 @@ array_push($toRecipients,
         ],
     ]
 );
+
+// Verifications files
+if   (!empty($_FILES['attachments']['name']))
+{
+
+//Define files's location to be uploaded
+$target_dir = "uploads/";
+
+//Define files's format
+$target_file = $target_dir . basename($_FILES["attachments"]["name"]);
+$uploadOk = 1;
+$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+// Check if file already exists
+if (file_exists($target_file)) {
+    echo "Sorry, file already exists.";
+    $uploadOk = 0;
+  }
+
+// Check file size
+if ($_FILES["attachments"]["size"] > 500000) {
+    echo "Sorry, your file is too large.";
+    $uploadOk = 0;
+  } 
+
+// Allow certain file formats
+if($imageFileType != "png") {
+    echo "Sorry, only oft models outlook files are allowed.";
+    $uploadOk = 0;
+  }
+
+//  Helps to debug
+echo 'Voici quelques informations de débogage :';
+print_r($_FILES); 
+
+echo '</pre>';
+}
+
 $newMail = [
     'message' => [
 
@@ -134,7 +179,20 @@ $newMail = [
             'contentType' => 'Text',
             'content' => $_POST['body'],
         ],  
+        // Get post attachments files
+        'attachments' => [
+            [
+                '@odata.type' => '#microsoft.graph.fileAttachment',
+                'name' => $_FILES['attachments'] ['name'],
+               
+                // Encode file in base64
+                'contentBytes' => base64_encode($_FILES['attachments'] ['tmp_name']),
+
+            ],
+
+        ],
     ],
+
 ]; 
 
 // Send mail
@@ -142,6 +200,7 @@ $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.f
     ->attachBody($newMail)
     ->execute();
 }
+
 ?>
 
 
