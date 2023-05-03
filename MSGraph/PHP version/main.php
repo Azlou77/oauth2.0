@@ -133,7 +133,7 @@ if   (!empty($_FILES['attachments']['name']))
 {
 
 //Define files's location to be uploaded
-$target_dir = "uploads/";
+$target_dir = "C:/Users/user1/AppData/Roaming/Microsoft/Templates";
 
 //Define files's format
 $target_file = $target_dir . basename($_FILES["attachments"]["name"]);
@@ -153,7 +153,7 @@ if ($_FILES["attachments"]["size"] > 500000) {
   } 
 
 // Allow certain file formats
-if($imageFileType != "png") {
+if($imageFileType != "oft") {
     echo "Sorry, only oft models outlook files are allowed.";
     $uploadOk = 0;
   }
