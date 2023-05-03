@@ -63,22 +63,27 @@ $graph = new Graph();
 
 //Get the access token from MSGraph class
 $token = GraphHelper::getAppOnlyToken();
-    
+
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
 /* Define variables and set to empty values
-   Request to send mail */
+Request to send mail */
 
 // Set recipients in array
 $toRecipients = [];
 array_push($toRecipients,
-    [
-        'emailAddress' => [
-            'address' => '',
-        ],
-    ]
+[
+    'emailAddress' => [
+        'address' => '',
+    ],
+  ]
 );
+
+// File which contains all verifications
+include 'View/include/upload.php';
+
+
 // Create new mail
 $newMail = [
     'message' => [
