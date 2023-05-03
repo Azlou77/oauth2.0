@@ -8,7 +8,7 @@
        <h1>Send mail</h1>
 
        <!-- Form post -->
-        <form  method="POST" action="">
+        <form  method="POST" action="" enctype="multipart/form-data">
 
             <!-- Field texte subject -->
             <div class="form-group">
@@ -16,23 +16,6 @@
                 <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject">
             </div>
 
-            <!-- Field select reminder -->
-            <!-- <div class="form-group">
-                <label for="reminder">Reminder</label>
-                    <select class="form-control" id="reminderMinutesBeforeStart" name="reminderMinutesBeforeStart"> -->
-                        <!-- Field options -->
-                        <!-- <option value="0">No reminder</option>
-                        <option value="15">15 minutes</option>
-                        <option value="30">30 minutes</option>
-                        <option value="60">1 hour</option>
-                        <option value="120">2 hours</option>
-                        <option value="1440">1 day</option>
-                        <option value="2880">2 days</option>
-                        <option value="4320">3 days</option>
-                        <option value="10080">1 week</option>
-                    </select>
-            </div> -->
-             
           
 
             <!-- Field text body-->
@@ -47,24 +30,18 @@
                 <input type="email" class="form-control" name="toRecipients" placeholder="Recipient">
             </div>
 
-            <!-- Field date -->
-            <!-- <div class="form-group">
-                <label for="start">Start</label>
-                <input type="date" class="form-control" id="start" name="start" placeholder="Start">
-            </div>
+            <!-- Field to set attachment -->
             <div class="form-group">
-                <label for="end">End</label>
-                <input type="date" class="form-control" id="end" name="end" placeholder="End">
-            </div> -->
+                <label for="attachments">Attachment</label>
+                <input type="file" class="form-control-file" id="attachments" name="attachments">
 
    
-            
-
             <!-- Button submit -->
             <button type="submit" name="submit" value="Valider" class="btn btn-primary">Submit</button>
         </form>
     </body>
 </html>
+
 
 <?php
 // Use dependencies commposer
