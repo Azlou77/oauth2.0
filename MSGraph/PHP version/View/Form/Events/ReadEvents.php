@@ -1,21 +1,36 @@
 <html>
     <body>
-    <!--Showing Calendar Events  -->
-    <h1>My Events </h1>
-    <table>
+      <!--Showing Calendar Events  -->
+      <h1>My Events </h1>
+
+<!-- Display events with bootstrap  -->
+<table class="table table-striped">
+    <thead>
         <tr>
             <th>Subject</th>
             <th>Start</th>
             <th>End</th>
+            <th>Attendees</th>
+            <th>Reminder</th>
+            <th>Body</th>
         </tr>
-        <?php foreach ($events as $event) : ?>
-            <tr>
-                <td><?php echo $event->getSubject(); ?></td>
-                <td><?php echo $event->getStart()->getDateTime(); ?></td>
-                <td><?php echo $event->getEnd()->getDateTime(); ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+    </thead>
+    <tbody>
+        <?php
+        // Loop to display all events
+        foreach ($events as $event) {
+            echo '<tr>';
+            echo '<td>' . $event->getSubject() . '</td>';
+            echo '<td>' . $event->getStart()->getDateTime() . '</td>';
+            echo '<td>' . $event->getEnd()->getDateTime() . '</td>';
+            echo '<td>' . $event->getAttendees()[0]->getEmailAddress()->getAddress() . '</td>';
+            echo '<td>' . $event->getReminderMinutesBeforeStart() . '</td>';
+            echo '<td>' . $event->getBody()->getContent() . '</td>';
+            echo '</tr>';
+        }
+        ?>
+    </tbody>
+</table>    
 
 
       <!-- Display events on card using bootstrap template -->
