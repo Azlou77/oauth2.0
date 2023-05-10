@@ -1,3 +1,28 @@
+<!-- Create form to create plan -->
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+       
+    </head>
+    <body>
+    <h1>Create todo lists</h1>
+    
+       <!-- Form post -->
+       <form  method="POST" action="">
+
+        <!-- Field texte title -->
+        <div class="form-group">
+                <label for="title">Display name</label>
+                <input type="text" class="form-control" id="title" name="displayName" placeholder="displayName">
+        </div>
+
+        <!-- Button submit -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </body>
+</html>
+
 <?php
 // Use dependencies commposer
 require_once 'vendor/autoload.php';
@@ -23,52 +48,31 @@ $token = GraphHelper::getAppOnlyToken();
 $graph->setAccessToken($token);
 
 
-// Request to search duedates events
+// define variables and set to empty values
+$newTodoList = 
+[
+   // Set displayname
+   "displayName" => "",
+];
 
-// Select properties
-$select = '$select=subject,body,start,end,isReminderOn,reminderMinutesBeforeStart';
+// Check if the form if the method is POST
+if ($_SERVER["REQUEST_METHOD"] == "POST") 
+{
 
-$searchEvents = $graph->createCollectionRequest('GET', '/users/louis.nguyen@network-systems.fr/events?' . $select)
-                            ->setReturnType(Model\Event::class)
-                            ->setPageSize(4);
+// Get POST values
+$newTodoList = 
+[
+   // Set displayname
+    "displayName" => $_POST["displayName"],
+];
 
-$events = $searchEvents->getPage();
 
+// Request to create todolist
+$todolist = $graph->createRequest("POST", "/users/louis.nguyen@network-systems.fr/todo/lists")
+->attachBody($newTodoList)
+->setReturnType(Model\TodoTaskList::class)
+->execute();
+
+
+}
 ?>
-
-<html>
-    <head>
-        <title>My Duedates Events</title>
-        <!-- Bootstrap assets -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <!-- Bootstrap theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-        <!-- Bootstrap JS -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    </head>
-    <body>
-    <html>
-    <body>
-        <!-- Display duedates events -->
-<h1>My duedates Events </h1>
-<div class="container">
-    <div class="row">
-        <?php foreach ($events as $event): ?>
-            <div class="col-sm-6 col-md-4">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <h3><?php echo $event->getSubject(); ?></h3>
-                        <p><?php echo $event->getBody()->getContent(); ?></p>
-                        <p><?php echo $event->getStart()->getDateTime(); ?></p>
-                        <p><?php echo $event->getEnd()->getDateTime(); ?></p>
-                        <p><?php echo $event->getReminderMinutesBeforeStart(); ?></p>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    </body>
-</html>
-
-   
