@@ -1,4 +1,4 @@
-<!-- Create form to create tasks for plan -->
+<!-- Create form to create buckets for plan -->
 <html>
     <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -6,15 +6,15 @@
        
     </head>
     <body>
-    <h1>Create tasks for plan </h1>
+    <h1>Create buckets for plan </h1>
     
        <!-- Form post -->
        <form  method="POST" action="">
 
-        <!-- Field texte title -->
+        <!-- Field texte name -->
         <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+                <label for="name">name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="name">
         </div>
 
         <!-- Button submit -->
@@ -49,25 +49,16 @@ $graph->setAccessToken($token);
 
 
 // define variables and set to empty values
-$newplanTasks = 
+$newplanbuckets = 
 [
-   // Set plan id
-   "planId" => "",
+    // Set name
+    "name" => "",
 
-   // Set bucket id
-   "bucketId" => "", 
+    // Set plan id
+    "planId" => "",
 
-    // Set title
-    "title" => "",
-
-    // Set assignements
-    "assignments" => [
-        "6bb6a1cd-2dee-4e34-ae0d-3e585b4918ab" => [
-            "@odata.type" => "#microsoft.graph.plannerAssignment",
-            "orderHint" => " !"
-        ]
-    ]
-
+    // Set orderHint
+    "orderHint" => " !",
 
 ];
 
@@ -76,32 +67,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
 
 // Get POST values
-$newplanTasks = 
+$newplanbuckets = 
 [
+    // Set name
+    "name" => $_POST["name"],
+
     // Set plan id
     "planId" => "A94Nset1eEy-nhtf2GrQvZgAH0Uf",
-    
-    // Set bucket id
-    "bucketId" => "EFS1pRYH2EmwDZnlRH51upgABCLz" ,
-    
-     // Set title
-     "title" => $_POST["title"],
-    
-     // Set assignements
-     "assignments" => [
-          "6bb6a1cd-2dee-4e34-ae0d-3e585b4918ab" => [
-                "@odata.type" => "#microsoft.graph.plannerAssignment",
-                "orderHint" => " !"
-          ]
-     ]
+
+    // Set orderHint
+    "orderHint" =>" !",
    
 ];
 
 
-// Request to create tasks for a plan
-$response = $graph->createRequest("POST", "/planner/tasks")
-    ->attachBody($newplanTasks)
-    ->setReturnType(Model\PlannerTask::class)
+// Request to create buckets for a plan
+$response = $graph->createRequest("POST", "/planner/buckets")
+    ->attachBody($newplanbuckets)
+    ->setReturnType(Model\PlannerBucket::class)
     ->execute();
 
 
