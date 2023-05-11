@@ -6,15 +6,15 @@
        
     </head>
     <body>
-    <h1>Create todo lists</h1>
+    <h1>Create plan </h1>
     
        <!-- Form post -->
        <form  method="POST" action="">
 
         <!-- Field texte title -->
         <div class="form-group">
-                <label for="title">Display name</label>
-                <input type="text" class="form-control" id="title" name="displayName" placeholder="displayName">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Title">
         </div>
 
         <!-- Button submit -->
@@ -49,10 +49,18 @@ $graph->setAccessToken($token);
 
 
 // define variables and set to empty values
-$newTodoList = 
+$newplanList = 
 [
-   // Set displayname
-   "displayName" => "",
+   // Set container
+    "container" => 
+    [
+         "url" => "",
+    ],
+    // Set owner
+    "owner" => "",
+
+    // Set title
+    "title" => "",
 ];
 
 // Check if the form if the method is POST
@@ -60,19 +68,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
 
 // Get POST values
-$newTodoList = 
+$newplanList = 
 [
-   // Set displayname
-    "displayName" => $_POST["displayName"],
+   // Set container
+    "container" => 
+    [
+         "url" => "https://graph.microsoft.com/v1.0/groups/c7f96311-8320-439a-8e5f-e29344265dee",
+    ],
+    // Set owner
+    "owner" => "6bb6a1cd-2dee-4e34-ae0d-3e585b4918ab",
+    // Set title
+    "title" => $_POST["title"],
 ];
 
 
-// Request to create todolist
-$todolist = $graph->createRequest("POST", "/users/louis.nguyen@network-systems.fr/todo/lists")
-->attachBody($newTodoList)
-->setReturnType(Model\TodoTaskList::class)
-->execute();
-
+// Request to create planlist
+$response = $graph->createRequest("POST", "/planner/plans")
+    ->attachBody($newplanList)
+    ->setReturnType(Model\PlannerPlan::class)
+    ->execute();
 
 }
 ?>
