@@ -1,39 +1,52 @@
+
+
 <!-- Display  tasks plan -->
 <html>
     <head>
         <title>Tasks</title>
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     </head>
     <body>
         <h1>Tasks board</h1>
-        <table class="table">
+        <!-- Boststrap table -->
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Title</th
-                    <th>Created by</th>
-                    <th>Created date time</th>
-                    <th>Due date time</th>
+                    <th scope="col">Task ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Assignments</th>
+                    <th scope="col">Created by</th>
+                    <th scope="col">Created date</th>
+                    <th scope="col">Duedate</th>
                 </tr>
             </thead>
             <tbody>
+                <!-- Loop through tasks -->
                 <?php foreach ($tasks as $task): ?>
                     <tr>
+                        <!-- Id -->
                         <td><?php echo $task->getId(); ?></td>
+
+                        <!-- Title -->
                         <td><?php echo $task->getTitle(); ?></td>
-                        <td><?php echo $task->getCreatedBy()->getEmailAddress()->getAddress(); ?></td>
+
+                        <!-- Image of personne which tasks is asssigned to-->
+                        <td><img src="<?php echo $task->getAssignments()->getAssignedTo()->getPhoto(); ?>" alt="Image of personne which tasks is asssigned to" width="50" height="50"></td>
+                        
+                        <!-- Name of personne which tasks is asssigned to-->
+                        <td><?php echo $task->getCreatedBy(); ?></td>
+
+                        <!-- Created date -->
                         <td><?php echo $task->getCreatedDateTime(); ?></td>
+
+                        <!-- Due date -->
                         <td><?php echo $task->getDueDateTime(); ?></td>
-                        <td><?php echo $task->getCompletedDateTime(); ?></td>
-                        <td><?php echo $task->getCompletedBy()->getEmailAddress()->getAddress(); ?></td>
-                        <td><?php echo $task->getPercentComplete(); ?></td>
-                        <td><?php echo $task->getBucketId(); ?></td>
-                        <td><?php echo $task->getPlanId(); ?></td>
-                        <td><?php echo $task->getBucketName(); ?></td>
-                        <td><?php echo $task->getPlanName(); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-
+        </table>
     </body>
 </html>

@@ -22,14 +22,13 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-// Only request specific properties
-$select = 'id,title,assignments,createdBy,createdDateTime,dueDateTime';
+
 
 
 // Get tasks plan
-$tasks = $graph->createRequest('GET', '/planner/plans/A94Nset1eEy-nhtf2GrQvZgAH0Uf/tasks?'.$select)
+$tasks = $graph->createRequest('GET', '/planner/plans/g1TwMkyntEWczQ362ikmCpgAA6Dg/tasks')
+    ->attachBody($newTasks)
     ->setReturnType(Model\PlannerTask::class)
     ->execute();
-    
-?>
 
+?>
