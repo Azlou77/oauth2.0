@@ -17,6 +17,12 @@
                 <input type="text" class="form-control" id="title" name="title" placeholder="Title">
         </div>
 
+          <!-- Field due date -->
+          <div class="form-group">
+                <label for="dueDate">Due date</label>
+                <input type="date" class="form-control" id="dueDateTime" name="dueDateTime" placeholder="Due date">
+        </div>
+
         <!-- Button submit -->
         <button type="submit" class="btn btn-primary">Submit</button>
         </form>
@@ -66,7 +72,10 @@ $newplanTasks =
             "@odata.type" => "#microsoft.graph.plannerAssignment",
             "orderHint" => " !"
         ]
-    ]
+        ],
+    // Set due date
+    "dueDateTime" => "",
+
 
 
 ];
@@ -93,7 +102,10 @@ $newplanTasks =
                 "@odata.type" => "#microsoft.graph.plannerAssignment",
                 "orderHint" => " !"
           ]
-     ]
+          ],
+        // Set due date
+        "dueDateTime" => $_POST["dueDateTime"],
+          
    
 ];
 
