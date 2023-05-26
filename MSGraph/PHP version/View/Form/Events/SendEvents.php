@@ -65,6 +65,13 @@
                             <label for="end">End</label>
                             <input type="date" class="form-control is-invalid" id="end" name="end" placeholder="End">
                         </div>
+
+                        <!-- Field email -->
+                        <div class="form-group">
+                            <label for="address">Email</label>
+                            <input type="email" class="form-control is-invalid" id="attendees" name="attendees" placeholder="Email">
+                        </div>
+
                         <!-- Button submit -->
                         <button type="submit" name="submit" value="Valider" class="btn btn-primary">Submit</button>
                     </form>
@@ -99,12 +106,25 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
+// Set attendees
+$attendees = [];
+array_push($attendees, [
+        'emailAddress' => [
+        'address' => '',
+        'name' => ''
+        ],
+        'type' => 'required'
+        ]);
 
 // define variables and set to empty values
 $newEvent =
 [
     // Set empty subject
     'subject' => '',
+
+    // Set attendees
+    'attendees' => $attendees,
+
     // Set empty subject
     'reminderMinutesBeforeStart' => '',
     // Set empty reminder
@@ -123,20 +143,27 @@ $newEvent =
         'dateTime' => '',
         'timeZone' => 'Pacific Standard Time'
     ],
-    // Set empty attendees
-    'attendees' => [
-        'emailAddress' => [
-            'address' => '',
-            'name' => ''
-        ],
-        'type' => 'required'
-    ],
+    
 ];
+
+
 
 // Check if the form if the method is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Set attendees
+    $attendees = [];
+    array_push($attendees, [
+            'emailAddress' => [
+            'address' => $_POST['attendees'],
+            'name' => $_POST['attendees']
+            ],
+            'type' => 'required'
+            ]);
+
   $newEvent = [
     'subject' => $_POST['subject'],
+    'attendees' => $attendees,
     // Set reminder
     'reminderMinutesBeforeStart' => $_POST['reminderMinutesBeforeStart'],
     'isReminderOn' => true,
@@ -154,15 +181,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'dateTime' => $_POST['end'],
         'timeZone' => 'Pacific Standard Time'
     ],
-    // Set attendees
-    'attendees' => [
-        'emailAddress' => [
-            'address' => $_POST['address'],
-            'name' => $_POST['name']
-        ],
-        'type' => 'required'
-    ],
   ];
+  
+
+
 
 // Request with users
 $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/events')
@@ -172,25 +194,26 @@ $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.f
 }
 
 // Return message error Bootstrap if inputs fields are empty
-if (empty($_POST["subject"]) || empty($_POST["body"]) || empty($_POST["attendees"]) || empty($_POST["start"]) || empty($_POST["end"]) || empty($_POST["reminderMinutesBeforeStart"])) {
-    echo '<div class="alert alert-danger" role="alert">Veuillez remplir tous les champs</div>';
-  } else {
-    echo '<div class="alert alert-success" role="alert">Votre Evènement a bien été envoyé</div>';
-  }
-
-// Return message success Bootstrap 
-if ($response->getStatus() === 202) {
-    echo '<div class="alert alert-success" role="alert">
-Evènement envoyé avec succès !
+if (empty($_POST['subject']) || empty($_POST['attendees']) || empty($_POST['reminderMinutesBeforeStart']) || empty($_POST['body']) || empty($_POST['start']) || empty($_POST['end'])) {
+    echo '<div class="alert alert-danger" role="alert">
+    Veuillez remplir tous les champs.
     </div>';
 }
 
+
+// Return message success Bootstrap
+if (isset($_POST['submit'])) {
+    echo '<div class="alert alert-success" role="alert">
+    Event created successfully !
+    </div>';
+}
 // Return message error Bootstrap
 else {
     echo '<div class="alert alert-danger" role="alert">
-    Une erreur est survenue lors de l\'envoi de l\evènement.
+    Error !
     </div>';
 }
+
 
 
 
