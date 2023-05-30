@@ -6,17 +6,28 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+        <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+    
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        initialDate: '2023-05-07',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+       
+    
+      calendar.render();
+    });
+    
+        </script>
     </head>
     <body>
-        <!-- Bootstrap Components Calendar  -->
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div id="calendar"></div>
-                </div>
-            </div>
-        </div>
-        <!-- Bootstrap Components Calendar  -->
+       
         <script>
             $(document).ready(function () {
                 var calendar = $('#calendar').fullCalendar({
