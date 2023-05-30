@@ -1,0 +1,94 @@
+<html lang="en">
+    <head>
+        <title>Calendar</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <!-- Bootstrap Components Calendar  -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap Components Calendar  -->
+        <script>
+            $(document).ready(function () {
+                var calendar = $('#calendar').fullCalendar({
+                    editable: true,
+                    events: "load.php",
+                    displayEventTime: false,
+                    editable: true,
+                    eventRender: function (event, element, view) {
+                        if (event.allDay === 'true') {
+                            event.allDay = true;
+                        } else {
+                            event.allDay = false;
+                        }
+                    },
+                    selectable: true,
+                    selectHelper: true,
+                    select: function (start, end, allDay) {
+                        var title = prompt('Event Title:');
+                        if (title) {
+                            var start = $.fullCalendar.formatDate(start, "Y-MM-DD HH:mm:ss");
+                            var end = $.fullCalendar.formatDate(end, "Y-MM-DD HH:mm:ss");
+                            $.ajax({
+                                url: 'addEvent.php',
+                                data: 'title=' + title + '&start=' + start + '&end=' + end,
+                                type: "POST",
+                                success: function (json) {
+                                    alert('Added Successfully');
+                                }
+                            });
+                            calendar.fullCalendar('renderEvent',
+                                    {
+                                        title: title,
+                                        start: start,
+                                        end: end,
+                                        allDay: allDay
+                                    },
+                                    true
+                                    );
+                        }
+                        calendar.fullCalendar('unselect');
+                    },
+                    editable: true,
+                    eventDrop: function (event, delta) {
+                        var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
+                        var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+                        $.ajax({
+                            url: 'update.php',
+                            data: 'title=' + event.title + '&start=' + start + '&end=' + end + '&id=' + event.id,
+                            type: "POST",
+                            success: function (json) {
+                                alert("Updated Successfully");
+                            }
+                        });
+                    },
+                    eventClick: function (event) {
+                        var decision = confirm("Do you really want to do that?");
+                        if (decision) {
+                            $.ajax({
+                                type: "POST",
+                                url: "delete.php",
+                                data: "&id=" + event.id,
+                                success: function (json) {
+                                    $('#calendar').fullCalendar('removeEvents', event.id);
+                                    alert("Updated Successfully");}
+                            });
+                        }
+                    }
+                });
+            });
+        </script>
+        
+        
+        
+    </body>
+</html>
