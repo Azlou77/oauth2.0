@@ -32,16 +32,15 @@
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
+
         // Modal onclick dayGridMonth
         dateClick: function(info) {
         $('#myModal').modal('show');
-        $('#start').val(info.dateStr);
-        $('#end').val(info.dateStr);
         },
     });
+        
         calendar.render();
       });
-
     </script>
 <body>
     <!-- Navbar -->
@@ -60,92 +59,14 @@
 
     <div class="row">
         <div id='calendar'></div>
-         <!-- The Modal -->
- <div class="modal" id="myModal">
-   <div class="modal-dialog modal-dialog-centered">
-
-    <!-- Form post -->
-    <form  method="POST" action="">
-        <div class="modal-content">
-        
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title">Add an event</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-        
-            <!-- Modal body -->
-            <div class="modal-body">
-        
-            <!-- Input subject-->
-                <div class="mb-3">
-                    <label for="" class="form-label">subject</label>
-                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter subject">
-            </div>
-        
-                <!-- Input  body-->
-                <div class="mb-3">
-                    <label for="body" class="form-label">body</label>
-                    <input type="text" class="form-control" id="body" name="body" placeholder="Enter body">
-                </div>
-            
-        
-                <!-- Email attendees-->
-                <div class="mb-3">
-                    <label for="attendees" class="form-label">attendees</label>
-                    <input type="email" class="form-control" id="attendees" name="attendees" placeholder="Enter attendees">
-                </div>
-        
-                <!-- Input start date-->
-                <div class="mb-3">
-                    <label for="start" class="form-label">Start date</label>
-                    <input type="date" class="form-control" id="start" name="start">
-                </div>
-
-                <!-- Input end date-->
-                <div class="mb-3">
-                    <label for="end" class="form-label">End date</label>
-                    <input type="date" class="form-control" id="end" name="end">
-                </div>
-            </div>
-            
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Add</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </form>
+       <?php  include './View/include/modal.php'; ?>
     </div>
-</div>   
-  
 </body>
 </html>
 
+<?php 
+include './View/include/GraphInit.php'; 
 
-<?php
-// Use dependencies commposer
-require_once 'vendor/autoload.php';
-require_once 'GraphHelper.php';
-
-// Use features MSGraph²
-use Microsoft\Graph\Graph;
-use Microsoft\Graph\Model;
-
-// Load .env file
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-$dotenv->required(['CLIENT_ID', 'TENANT_ID', 'GRAPH_USER_SCOPES']);
-
-// Initialisze MS-Graph client authentification
-GraphHelper::initializeGraphForAppOnlyAuth();
-$graph = new Graph();
-
-//Get the access token from MSGraph class
-$token = GraphHelper::getAppOnlyToken();
-    
-//Set the access token to the GraphHelper class
-$graph->setAccessToken($token);
 
 // Set attendees
 $attendees = [];
@@ -220,8 +141,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   ];
   
 
-
-
 // Request with users
 $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/events')
     ->attachBody($newEvent)
@@ -230,7 +149,7 @@ $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.f
 }
 
 // Return message error Bootstrap if inputs fields are empty
-if (empty($_POST['subject']) || empty($_POST['attendees']) || empty($_POST['reminderMinutesBeforeStart']) || empty($_POST['body']) || empty($_POST['start']) || empty($_POST['end'])) {
+if (empty($_POST['subject']) || empty($_POST['attendees'])  || empty($_POST['body']) || empty($_POST['start']) || empty($_POST['end'])) {
     echo '<div class="alert alert-danger" role="alert">
     Veuillez remplir tous les champs.
     </div>';
@@ -250,12 +169,5 @@ else {
     </div>';
 }
 
-// Request to get all events
-$response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.fr/events')
-    ->attachBody($newEvent)
-    ->setReturnType(Model\Event::class)
-    ->execute();
-
-
-
 ?>
+

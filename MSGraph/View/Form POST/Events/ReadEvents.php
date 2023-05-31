@@ -48,8 +48,6 @@ $newEvents = $events->getPage();
                         <th>Body</th>
                         <th>Start</th>
                         <th>End</th>
-                        <th>Reminder</th>
-                        <th>Reminder minutes before start</th>
                     </tr>
                 </thead>
                 <tbody>
