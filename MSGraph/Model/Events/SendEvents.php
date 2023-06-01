@@ -70,7 +70,4 @@ $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.f
     ->execute();
 }
 
-
-
-
 ?>

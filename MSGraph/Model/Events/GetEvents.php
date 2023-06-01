@@ -1,10 +1,4 @@
 <?php
-//Get the access token from MSGraph class
-$token = GraphHelper::getAppOnlyToken();
-
-//Set the access token to the GraphHelper class
-$graph->setAccessToken($token);
-
 //Set the users who participate to the event
 $attendees = [];
 array_push($attendees, [
