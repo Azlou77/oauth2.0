@@ -38,14 +38,25 @@
         $('#myModal').modal('show');
         },
     });
-        
+
+
+    // Display events MSGraph
+    var events = [];
+    var events = <?php echo json_encode($events); ?>;
+    for (var i = 0; i < events.length; i++) {
+        calendar.addEvent({
+            title: events[i].subject,
+            start: events[i].start.dateTime,
+            end: events[i].end.dateTime,
+            allDay: false
+        });
+    }
+
         calendar.render();
       });
     </script>
 <body>
-    <!-- Navbar -->
-    <?php include './View/include/navbar.php'; ?>
-
+  
     <!-- Header -->
     <header>
         <h3 class="ms-fontSize-42 ms-fontWeight-regular">Welcome to Blazor Calendar</h3>
@@ -59,7 +70,7 @@
 
     <div class="row">
         <div id='calendar'></div>
-       <?php  include './View/include/modal.php'; ?>
+       <?php  include './View/partials/modal.php'; ?>
     </div>
 </body>
 </html>
@@ -187,7 +198,4 @@ else {
     Error !
     </div>';
 }
-
-
 ?>
-
