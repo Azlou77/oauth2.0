@@ -3,7 +3,7 @@
 require_once 'vendor/autoload.php';
 require_once 'GraphHelper.php';
 
-// Use features MSGraph²
+// Use features MSGraph
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 
