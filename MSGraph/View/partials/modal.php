@@ -49,7 +49,7 @@
             
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="submit" onclick="getValue();" class="btn btn-primary"  data-dismiss="modal">Enregistrer</button>
+                <button type="submit"  class="btn btn-primary"  data-dismiss="modal">Enregistrer</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
             </div>
         </div>

@@ -42,7 +42,6 @@ array_push($attendees, [
     ->execute();
     echo "List all events";
 
-    
 
 
 ?>
