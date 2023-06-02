@@ -56,44 +56,6 @@
     </form>
     </div>
 </div>   
-<!-- Add function addEvent -->
-<?php
-    // Add event
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $graph->createRequest("POST", "/users/ ". $_POST['attendees'] . "/events")
-        ->attachBody($newEvent)
-        ->execute();
-    }
-    // Display event
-    $events = $graph->createCollectionRequest('GET', '/ users/ '. $_POST['attendees'] . '/events')
-    ->setReturnType(Model\Event::class);
-    $newEvents = $events->getPage();   
-
-    // Delete event
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $graph->createRequest("DELETE", "/users/ ". $_POST['attendees'] . "/events")
-        ->attachBody($newEvent)
-        ->execute();
-    }
-
-    // Update event
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $graph->createRequest("PATCH", "/users/ ". $_POST['attendees'] . "/events")
-        ->attachBody($newEvent)
-        ->execute();
-    }
-
-    // if the fields are empty get the error message
-    if (empty($_POST['subject']) || empty($_POST['attendees'])  || empty($_POST['body']) || empty($_POST['start']) || empty($_POST['end'])) {
-        echo '<div class="alert alert-danger" role="alert">
-        <h4 class="alert-heading">Error</h4>
-        <p>Fields are empty</p>
-        <hr>
-        <p class="mb-0">Please fill in all fields</p>
-        </div>';
-    }
-
-
 
 
 
