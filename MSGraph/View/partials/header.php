@@ -27,24 +27,33 @@
     <!-- Script fullcalendar Api -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-            initialDate: '2021-07-07',
-            headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
+       document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
 
-        // Modal onclick dayGridMonth
-        dateClick: function(info) {
-        $('#myModal').modal('show');
-        },
-        });
-        // Render the event on the calendar
-        calendar.render();
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: <?php echo json_encode($events); ?>,
+        eventRender: function(info) {
+            // Customize the event rendering here
+            // For example, add a CSS class to the event element
+            info.el.classList.add('event-card');
+        }
+    });
 
-      });
+    calendar.render();
+});
+</script>
+
+<!-- Add your custom CSS here -->
+<style>
+.event-card {
+    /* Add your custom styles for the event "cards" here */
+    /* For example, you could give it a background color or border */
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
+</style>
+
+<!-- Create a container for the calendar -->
+<div id='calendar'></div>
     </script>
