@@ -1,15 +1,5 @@
 <?php include 'SendEvents.php'; ?>
 
-<?php   
-//Get the events
-$events = $graph->createCollectionRequest('GET', '/users/louis.nguyen@network-systems.fr/events')
-->setReturnType(Model\Event::class)
-->setPageSize(25);
-
-$newEvent = $events->getPage()
-
-?>
-
 <?php 
 // Return message success Bootstrap
 if (isset($_POST['submit'])) {
@@ -58,15 +48,25 @@ else {
                                 </thead>
                         <?php foreach ($newEvent as $event): ?>
                             <tr>
+                                <!-- Display events MSGraph -->
                                 <td><?php echo $event->getSubject(); ?></td>
-                                <td><?php echo $event->getBody()->getContent(); ?></td>
+                                <td><?php echo $event->getBody()->getContent(); ?></td> 
                                 <td><?php echo $event->getStart()->getDateTime(); ?></td>
                                 <td><?php echo $event->getEnd()->getDateTime(); ?></td>
+
+
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- Card events -->
+
+        <div style="order: 1; background: rgb(199, 245, 217); color: rgb(11, 65, 33);" class="event event-1" data-mdb-event-key="1" data-mdb-event-order="0" draggable="true" data-mdb-toggle="tooltip" data-mdb-offset="0,10" data-mdb-html="true" data-mdb-original-title="<h6><strong>Angular Meetup</strong></h6><p><small><em>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</em></small></p><p class=&quot;mb-0&quot;><small>
+    <i class=&quot;fas fa-calendar-alt pr-1&quot;></i>
+    30/05/2023 <small class=&quot;fw-light&quot;>10:00</small> -
+    05/06/2023 <small class=&quot;fw-light&quot;>14:00</small></small></p>"><?php echo $event->getSubject(); ?></div>
 </body>
 </html>

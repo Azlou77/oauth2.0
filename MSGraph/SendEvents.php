@@ -94,3 +94,10 @@ $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.f
 }
 
 ?>
+<?php
+//Get the events
+$events = $graph->createCollectionRequest('GET', '/users/louis.nguyen@network-systems.fr/events')
+->setReturnType(Model\Event::class)
+->setPageSize(25);
+$newEvent = $events->getPage()
+?>
