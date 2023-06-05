@@ -22,10 +22,22 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-// Get photos
-$photos = $graph->createRequest('GET', '/users/louis.nguyen@network-systems.fr/photos/48x48/$value')
-    ->setReturnType(Model\Photo::class)
+// Request to get photo from user
+$response = $graph->createRequest('GET', '/users/6bb6a1cd-2dee-4e34-ae0d-3e585b4918ab/photo/$value')
+    ->addHeaders( ["Content-Type" => "image/jpg"])
     ->execute();
+?>
 
-// Display photos
-echo "List all photos";
+<html>
+    <head>
+        <title>MSGraph</title>
+    </head>
+    <body>
+        <h1>MSGraph</h1>
+        <h2>Get photo</h2>
+        <p>Get photo from user</p>
+        <!-- Display photo with getRawBody-->
+        <img src="data:image/jpg;base64,<?php echo base64_encode($response->getRawBody()); ?>" />
+
+    </body>
+</html>
