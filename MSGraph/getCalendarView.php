@@ -22,22 +22,9 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-// Request to get photo from user
-$response = $graph->createRequest('GET', '/users/louis.nguyen@network-systems.fr/photo/$value')
-    ->addHeaders( ["Content-Type" => "image/jpg"])
+// Request to get calendar view
+$response = $graph->createRequest('GET', '/me/calendarView?startDateTime=2023-05-01T00:00:00&endDateTime=2023-05-28T00:00:00')
+    ->setReturnType(Model\Event::class)
     ->execute();
+
 ?>
-
-<html>
-    <head>
-        <title>MSGraph</title>
-    </head>
-    <body>
-        <h1>MSGraph</h1>
-        <h2>Get photo</h2>
-        <p>Get photo from user</p>
-        <!-- Display photo with getRawBody-->
-        <img src="data:image/jpg;base64,<?php echo base64_encode($response->getRawBody()); ?>" />
-
-    </body>
-</html>
