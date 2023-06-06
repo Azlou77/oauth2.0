@@ -22,16 +22,10 @@ $token = GraphHelper::getAppOnlyToken();
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
 
-
 // Get calendar view
-
-$events = $graph->createCollectionRequest('GET', '/users/louis.nguyen@network-systems.fr/events')
-    ->setReturnType(Model\Event::class)
-    ->addHeaders(array('Prefer' => 'outlook.timezone="Europe/Paris"'))
-    ->setPageSize(50);
+$events = $graph->createCollectionRequest('GET', '/users/louis.nguyen@network-systems.fr/calendarView?startDateTime=2023-05-05T10:00-22:00&endDateTime=2023-05-28T10:00-22:00&?select=attendees')
+    ->setReturnType(Model\Event::class);
 $newEvents = $events->getPage();
-
-
 
 ?>
 <html>
@@ -41,8 +35,7 @@ $newEvents = $events->getPage();
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
-
-
+    
 </head>
     <body>
         <!-- Display calendar view -->
@@ -52,13 +45,8 @@ $newEvents = $events->getPage();
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Subject</th>
-                        <th scope="col">Start</th>
-                        <th scope="col">End</th>
-                        <th scope="col">Name </th>
                         <th  scope="col">Email</th>
-                        <th scope="col">Attendees</th>
-                       
+                        <th scope="col">Name attendees </th>
                         
                     </tr>
                 </thead>
@@ -66,36 +54,25 @@ $newEvents = $events->getPage();
                     <?php
                     foreach ($newEvents as $event) {
                         echo "<tr>";
-                        echo "<td>" . $event->getSubject() . "</td>";
-                        echo "<td>" . $event->getStart()->getDateTime() . "</td>";
-                        echo "<td>" . $event->getEnd()->getDateTime() . "</td>";
-                        echo "<td>" . $event->getOrganizer()->getEmailAddress()->getName() . "</td>";
-                        echo "<td>" . $event->getOrganizer()->getEmailAddress()->getAddress() . "</td>";
                         
-                        // Read the file and return a string
-                        $json_string  = file_get_contents("https://www.jsonblob.com/api/jsonBlob/1115576596936540160");
+                        // Get properties to retrieve emailAddress 
+                        $address = $event->getAttendees();
+                        $name = $event->getAttendees();
 
-                        // Json decode string to array
-                        $parsed_json  = json_decode($json_string, true);
-                      
-                        // Array to string attendees
-                        $attendees = $parsed_json['value'];
-                        $emailAddress = $attendees['emailAddress'];
-                        foreach ($attendees as $attendee) {
-                            $name = $attendee['emailAddress']['name'];
-                            $address = $attendee['emailAddress']['address'];
-                            echo "Name: $name, Address: $address\n";
-                        }
-                       
-                        echo "</tr>";
-                       
+                        //  Json encode to convert object to string -->
+                        echo "<td>" . json_encode($name) . "</td>";
+                        echo "<td>" . json_encode($address) . "</td>";
+
+
+                          echo "</tr>";
                     }
 
-
                     ?>
-                   
+         
                 </tbody>
             </table>
+            <h2>Get JSON Data from a PHP Server</h2>
+                    <p id="demo"></p>
         </div>
     </body>
 </html>
