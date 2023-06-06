@@ -72,21 +72,51 @@ $newEvents = $events->getPage();
                         echo "<td>" . $event->getOrganizer()->getEmailAddress()->getName() . "</td>";
                         echo "<td>" . $event->getOrganizer()->getEmailAddress()->getAddress() . "</td>";
                         
+                     
+
                         // Read the file and return a string
                         $json_string  = file_get_contents("https://www.jsonblob.com/api/jsonBlob/1115576596936540160");
-
+                         
                         // Json decode string to array
                         $parsed_json  = json_decode($json_string, true);
-                      
-                        // Array to string attendees
-                        $attendees = $parsed_json['value'];
-                        $emailAddress = $attendees['emailAddress'];
-                        foreach ($attendees as $attendee) {
-                            $name = $attendee['emailAddress']['name'];
-                            $address = $attendee['emailAddress']['address'];
-                            echo "Name: $name, Address: $address\n";
+
+                        // Set Attendees array
+                        $attendees = array(
+                                [
+                                    'emailAddress' => [
+                                        'address' => '',
+                                        'name' => '',
+                                    ],
+                                    'type' => 'required',
+                                    'proposedNewTime' => null,
+                                    'status' => [
+                                        'response' => '',
+                                        'time' => '',
+                                    ],
+
+                                ]
+                            );
+                        foreach ($parsed_json as $key => $value) {
+                            // Set email address
+                            $attendees[$key]['emailAddress']['address'] = $value['email'];
+                            
+                            // Display name
+                            echo $value['name'] . "<br>";
+
+                            // Display email
+                            echo $value['email'] . "<br>";
+                            
+
                         }
-                       
+
+
+                    
+
+
+
+
+                 
+
                         echo "</tr>";
                        
                     }
