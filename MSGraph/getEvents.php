@@ -57,7 +57,8 @@ $newEvents = $events->getPage();
                         <th scope="col">End</th>
                         <th scope="col">Name </th>
                         <th  scope="col">Email</th>
-                        <th scope="col">Attendees</th>
+                        <th scope="col">Attendees Email</th>
+                        <th scope="col">Attendees Name</th>
                        
                         
                     </tr>
@@ -74,26 +75,26 @@ $newEvents = $events->getPage();
                         
                      
 
-                        // Read the file and return a string
-                        $json_string  = file_get_contents("https://www.jsonblob.com/api/jsonBlob/1115576596936540160");
+                            // Get properties to retrieve emailAddress 
+                            $address = $event->getAttendees();
+                            $name = $event->getAttendees();
+    
+                            //  Json encode to convert object to string -->
+                            $address = json_encode($address);
+                            $name = json_encode($name);
 
+                            // Formatting JSON data rendering
+                            // Remove [], "", and {} from string
+                            $address = str_replace(array('[', ']', '"', '{', '}'), '', $address);
+                            $name = str_replace(array('[', ']', '"', '{', '}'), '', $name);
 
-                        // Json decode json data to PHP objects
-                        $parsed_json  = json_decode($json_string, true);
+                            // Add space after comma and after :
+                            $address = str_replace(array(',', ':'), array(', ', ': '), $address);
+                            $name = str_replace(array(',', ':'), array(', ', ': '), $name);
 
-                        // Set Attendees array
-                        $attendees = $parsed_json['attendees'];
-                        
-                        // Foreach loop
-                        foreach ($parsed_json->$attendees as $attendee) {
-
-                            // Convert array to string
-                            $addresse = implode(" ", $attendee['emailAddress']['address']);
-                            $name = implode(" ", $attendee['emailAddress']['name']);
-
-                            echo "<td>" . $addresse . "</td>";
+                            // Display results
+                            echo "<td>" . $address . "</td>";
                             echo "<td>" . $name . "</td>";
-                        }
 
                         echo "</tr>";
                        
