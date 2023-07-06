@@ -1,4 +1,4 @@
-<html>
+<body>
     <!-- Display inbox messages -->
     <h1>My inbox</h1>
     <table class="table">
@@ -18,4 +18,6 @@
                 </tr>
             <?php endforeach; ?>
         </tbody>
+        </body>
 </html>
+

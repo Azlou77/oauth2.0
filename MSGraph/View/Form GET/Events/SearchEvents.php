@@ -1,31 +1,5 @@
-<?php
-// Request to search duedates events
-
-// Select properties
-$select = '$select=subject,body,start,end,isReminderOn,reminderMinutesBeforeStart';
-
-$searchEvents = $graph->createCollectionRequest('GET', '/users/louis.nguyen@network-systems.fr/events?' . $select)
-                            ->setReturnType(Model\Event::class)
-                            ->setPageSize(4);
-
-$events = $searchEvents->getPage();
-
-?>
-
-<html>
-    <head>
-        <title>My Duedates Events</title>
-        <!-- Bootstrap assets -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <!-- Bootstrap theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-        <!-- Bootstrap JS -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    </head>
-    <body>
-    <html>
-    <body>
-        <!-- Display duedates events -->
+<body>
+<!-- Display duedates events -->
 <h1>My duedates Events </h1>
 <div class="container">
     <div class="row">

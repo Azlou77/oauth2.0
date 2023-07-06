@@ -75,3 +75,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'timeZone' => 'Pacific Standard Time'
     ],
   ];
+}
+?>
