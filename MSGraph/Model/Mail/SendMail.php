@@ -69,7 +69,7 @@ $response = $graph->createRequest('POST', '/users/louis.nguyen@network-systems.f
     ->execute();
 }
 ?>
-
+<?php
 /* Define variables and set to empty values
    Request to send mail */
 
@@ -142,7 +142,7 @@ $newMail = [
     ],
     
 ];
-<?php
+
 
 /* Get post variables 
    Request to send mail */
