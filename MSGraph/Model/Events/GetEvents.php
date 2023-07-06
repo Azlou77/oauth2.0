@@ -1,4 +1,5 @@
 <?php
+
 //Set the users who participate to the event
 $attendees = [];
 array_push($attendees, [
