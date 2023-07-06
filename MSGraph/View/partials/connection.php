@@ -28,10 +28,4 @@ catch (PDOException $e)
     echo '<div class="alert alert-danger" role="alert">Connection failed</div>' . $e->getMessage();
 }
 echo '<div class="alert alert-success" role="alert">Connection successfull</div>';
-
-
-
-
-
-
 ?>

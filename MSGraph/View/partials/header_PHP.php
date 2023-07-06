@@ -1,14 +1,16 @@
 <?php
 // Use dependencies commposer
-require_once 'vendor/autoload.php';
-require_once 'GraphHelper.php';
+require_once 'c:\\wamp64\\www\\oauth2.0\\MSGraph\\vendor\\autoload.php';
+require_once 'c:\\wamp64\\www\\oauth2.0\\MSGraph\\GraphHelper.php';
 
-// Use features MSGraph²
+
+
+// Use features MSGraph
 use Microsoft\Graph\Graph;
-use Microsoft\Graph\Model;
+
 
 // Load .env file
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable('c:\\wamp64\\www\\oauth2.0\\MSGraph');
 $dotenv->load();
 $dotenv->required(['CLIENT_ID', 'TENANT_ID', 'GRAPH_USER_SCOPES']);
 
@@ -21,3 +23,4 @@ $token = GraphHelper::getAppOnlyToken();
     
 //Set the access token to the GraphHelper class
 $graph->setAccessToken($token);
+
